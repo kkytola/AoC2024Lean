@@ -1,6 +1,8 @@
 import Lake
 open Lake DSL
 
+require batteries from git "https://github.com/leanprover-community/batteries"
+
 package «AoC2024Lean» where
   -- add package configuration options here
 
