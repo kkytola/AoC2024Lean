@@ -15,16 +15,16 @@ def String.openWith? (s : String) (c : Char) : Option String := do
   else none -- not the desired opening character
 
 def String.until? (s : String) (c : Char) : Option String := do
-  (← s.splitOnFirst? c).1 -- find the closing character and keep the part until it
+  (←s.splitOnFirst? c).1 -- find the closing character and keep the part until it
 
 def String.toSmallNat? (s : String) : Option Nat := do
   if (s.length ≥ 1 ∧ s.length ≤ 3) -- small means 1-3 digits
-  then ← s.toNat? -- try to parse as a natural number
+  then ←s.toNat? -- try to parse as a natural number
   else none -- the string does not represent a "small" natural number
 
 def String.parseSmallNatPair? (s : String) : Option (Nat × Nat) := do
-  let p ← (← (← s.openWith? '(').until? ')').splitOnFirst? ',' -- between parens, comma separated
-  some (← p.1.toSmallNat?, ← p.2.toSmallNat?) -- pair of "small" natural numbers
+  let p ← (←(←s.openWith? '(').until? ')').splitOnFirst? ',' -- between parentheses, comma separated
+  some (←p.1.toSmallNat?, ←p.2.toSmallNat?) -- pair of "small" natural numbers
 
 def parseInput (input : String) : List (Nat × Nat) :=
   listOpt <| ((input.splitOn "mul").drop 1).map (·.parseSmallNatPair?)
@@ -36,4 +36,4 @@ def main : IO Unit := do
   let input ← (IO.FS.readFile "./AoC2024Lean/input-AoC2024d03p1.txt")
   IO.println s!"Added multiplications : {(addProducts <| parseInput input)}"
 
-#eval main -- Added multiplications : 161
+--#eval main -- Added multiplications : 161

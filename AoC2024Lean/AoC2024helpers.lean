@@ -1,5 +1,6 @@
 import Batteries.Data.List
 
+
 section OptionHandling -- Dirty.
 
 /-- Turn an `Option String` to `String` forcefully, defaulting to the empty string `""`. -/
@@ -60,11 +61,11 @@ def List.augmentWithEnum₁ (l : List α) : List (α × Nat) :=
 
 /-- The list repeating a given list n times. -/
 def List.repeat (l : List α) (n : Nat) : List α :=
-  List.flatten $ ((fun _ => l) <$> List.range n)
+  List.flatten $ ((fun _ ↦ l) <$> List.range n)
 
 /-- The list containing n times the same element a. -/
 def listRepeat (n : Nat) (a : α) : List α :=
-  (fun _ => a) <$> List.range n
+  (fun _ ↦ a) <$> List.range n
 
 /-- An integer interval list with a given starting and end value. -/
 def List.Icc (a b : Int) : List Int := (· + a) <$> (Int.ofNat <$> List.range (b-a+1).toNat)
@@ -98,9 +99,9 @@ def List.findFirstPattern? {α : Type u} [DecidableEq α] (L : List α) (pat : L
     Option Nat :=
   let aux : List (Option Nat) :=
             (((List.range L.length).map
-              fun i => (L.drop i, i)).map
-              fun si => (si.fst.firstDiff? pat, si.snd)).map
-              fun oi => match oi.fst with
+              fun i ↦ (L.drop i, i)).map
+              fun si ↦ (si.fst.firstDiff? pat, si.snd)).map
+              fun oi ↦ match oi.fst with
               | none => pure oi.snd
               | some c => if c > pat.length then pure oi.snd else none
   (listOpt aux)[0]?
@@ -110,7 +111,7 @@ def runList {m : Type u → Type v} {α : Type u} [Monad m] (as' : List (m α)) 
     m (List α) := do
   match as' with
   | []          => pure []
-  | a' :: rest  => do pure ((← a') :: (← runList rest))
+  | a' :: rest  => do pure ((←a') :: (←runList rest))
 
 end List_helpers -- section
 
@@ -163,7 +164,7 @@ structure Position where
   y : Nat
 deriving BEq, DecidableEq
 
-instance : ToString Position := ⟨fun p => s!"⟨{p.x},{p.y}⟩"⟩
+instance : ToString Position := ⟨fun p ↦ s!"⟨{p.x},{p.y}⟩"⟩
 
 def Position.mkXY (x y : Nat) : Position := {x := x, y := y}
 
@@ -179,11 +180,11 @@ inductive Many (α : Type u) where
   | none
   | more : α → (Unit → Many α) → Many α
 
-def Many.one (a : α) : Many α := .more a (fun _ => none)
+def Many.one (a : α) : Many α := .more a (fun _ ↦ none)
 
 def Many.both : Many α → Many α → Many α
   | none, bs => bs
-  | more a as', bs => more a (fun _ => both (as' ()) bs)
+  | more a as', bs => more a (fun _ ↦ both (as' ()) bs)
 
 def manyMany : Many (Many α) → Many α
   | Many.none         => Many.none
@@ -229,7 +230,7 @@ def Many.find? (as : Many α) (p : α → Bool) : Option α :=
   | none => Option.none
   | more a as' => if p a then some a else find? (as' ()) p
 
-def Many.first? (as : Many α) : Option α := as.find? (fun _ => true)
+def Many.first? (as : Many α) : Option α := as.find? (fun _ ↦ true)
 
 def Many.first [Inhabited α] (as : Many α) : α := match as.first? with
   | some a => a
@@ -250,7 +251,7 @@ def runMany {m : Type u → Type v} {α : Type u} [Monad m] (as' : Many (m α)) 
   | Many.none           => pure Many.none
   | Many.more a' rest'  => do
     let rest ← runMany $ rest' ()
-    pure $ Many.more (← a') (fun _ => rest)
+    pure $ Many.more (←a') (fun _ ↦ rest)
 
 end Many -- section
 

@@ -10,7 +10,7 @@ def similarityScore (pairs : List (Int × Int)) : Int :=
 
 def parseLineToPair (line : String) : Option (Int × Int) := do
   let parts := line.splitOn "   "
-  some (← (← parts.get? 0).toNat?, ← (← parts.get? 1).toNat?)
+  some (←(←parts.get? 0).toNat?, ←(←parts.get? 1).toNat?)
 
 def parseInput (input : String) : List (Int × Int) :=
   listOpt <| (input.splitOn "\n").map fun line ↦ parseLineToPair line
