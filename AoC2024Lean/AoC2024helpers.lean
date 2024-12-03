@@ -35,14 +35,12 @@ def optNum {R : Type u} [Zero R] : Option R → R
 def optChar (c : Option Char) : String := optString $ c.map Char.toString
 
 /-- Turn an `Option α × Option β` to `Option (α × β)`, defaulting to `none`. -/
-def optPair : Option α × Option β → Option (α × β)
-  | (none, _)         => none
-  | (_, none)         => none
-  | (some a, some b)  => some (a, b)
+def optPair (ab : Option α × Option β) : Option (α × β) := do
+  (←ab.1, ←ab.2)
 
 /-- Turn an `Option α × Option β × Option γ` to `Option (α × β × γ)`, defaulting to `none`. -/
-def optTriple (abc' : Option α × Option β × Option γ) : Option (α × β × γ) :=
-  optPair $ (fun q => (q.1, optPair q.2)) abc'
+def optTriple (abc : Option α × Option β × Option γ) : Option (α × β × γ) := do
+  (←abc.1, ←abc.2.1, ←abc.2.2)
 
 end OptionHandling -- section
 
