@@ -1,4 +1,4 @@
-import AoC2024Lean.AoC2024helpers
+import AoC2024Lean.LittleHelpers
 
 def similarityScore (pairs : List (Int × Int)) : Int :=
   -- Golfs to:

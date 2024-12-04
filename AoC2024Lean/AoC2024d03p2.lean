@@ -1,4 +1,4 @@
-import AoC2024Lean.AoC2024helpers
+import AoC2024Lean.LittleHelpers
 
 def String.splitOnFirst? (s : String) (c : Char) : Option (String × String) := do
   let fst := s.takeWhile (· != c) -- find the splitting character
@@ -47,6 +47,6 @@ def addProducts (l : List (Nat × Nat)) : Nat :=
 
 def main : IO Unit := do
   let input ← (IO.FS.readFile "./AoC2024Lean/input-AoC2024d03p2.txt")
-  IO.println s!"Added multiplications : {(addProducts <| parseInput input)}"
+  IO.println s!"Sum of multiplications : {(addProducts <| parseInput input)}"
 
---#eval main -- Added multiplications : 48
+--#eval main -- Sum of multiplications : 48

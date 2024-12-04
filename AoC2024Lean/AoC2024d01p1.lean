@@ -1,4 +1,4 @@
-import AoC2024Lean.AoC2024helpers
+import AoC2024Lean.LittleHelpers
 
 def totalDist (pairs : List (Int × Int)) : Nat :=
   -- Golfs to:

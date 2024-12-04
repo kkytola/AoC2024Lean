@@ -1,4 +1,4 @@
-import AoC2024Lean.AoC2024helpers
+import AoC2024Lean.LittleHelpers
 
 def safetyCheck (levels : List Int) : Bool :=
   let diffs := (fun p ↦ p.2 - p.1) <$> (levels.drop 1).zip (levels.dropLast)

@@ -1,20 +1,7 @@
-import AoC2024Lean.AoC2024helpers
+import AoC2024Lean.LittleHelpers
 
 def parseInput (input : String) : List (List Char) :=
   String.toList <$> (input.splitOn "\n").filter (·.length > 0)
-
-def height {α : Type} (arr : List (List α)) : Nat :=
-  arr.length
-
-def width {α : Type} (arr : List (List α)) : Nat :=
-  (optList <| arr.get? 0).length
-
-def atPos' (i j : Int) (arr : List (List Char)) : Option Char := do
-  if (i < 0 ∨ j < 0) then none
-  else (optList <| arr.get? i.toNat).get? j.toNat
-
-def atPos (i j : Int) (arr : List (List Char)) : Char :=
-  optChar' <| atPos' i j arr
 
 def mas : List Char := "MAS".toList
 
