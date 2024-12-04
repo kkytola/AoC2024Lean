@@ -1,5 +1,8 @@
 import Batteries.Data.List
 
+open Std.Internal Parsec Lean.Parser
+open Std.Internal.Parsec.String
+
 
 section OptionHandling -- Dirty.
 
@@ -34,6 +37,11 @@ def optNum {R : Type u} [Zero R] : Option R → R
 /-- Turn an `Option Char` to `String` forcefully, defaulting to empty string `""`. -/
 def optChar (c : Option Char) : String := optString $ c.map Char.toString
 
+/-- Turn an `Option Char` to `Char` forcefully, defaulting to blank space `' '`. -/
+def optChar' : Option Char → Char
+  | none => ' '
+  | some c => c
+
 /-- Turn an `Option α × Option β` to `Option (α × β)`, defaulting to `none`. -/
 def optPair (ab : Option α × Option β) : Option (α × β) := do
   (←ab.1, ←ab.2)
@@ -43,6 +51,37 @@ def optTriple (abc : Option α × Option β × Option γ) : Option (α × β × 
   (←abc.1, ←abc.2.1, ←abc.2.2)
 
 end OptionHandling -- section
+
+
+section Parsing
+
+def Std.Internal.Parsec.orSkip {α : Type} (p : Parser α) : Parser (Option α) :=
+  (some <$> attempt p) <|> (skip *> return none)
+
+def Std.Internal.Parsec.ParseResult.toOption {α ι : Type} : ParseResult α ι → Option α
+  | ParseResult.success _ a => some a
+  | ParseResult.error _ _ => none
+
+def Std.Internal.Parsec.repeat {ι α : Type} (m : Nat) (p : Parsec ι α) :
+    Parsec ι (List α) :=
+  match m with
+  | 0 => pure []
+  | m + 1 => do
+    let a ← p
+    let as ← p.repeat m
+    return a :: as
+
+def Std.Internal.Parsec.String.parseNDigits (n : Nat) : Parser Nat := do
+  match (String.mk (←digit.repeat n)).toNat? with
+  | none => fun it ↦ .error it "does not parse as a natural number"
+  | some k => fun it ↦ .success it k
+
+instance [ToString α] : ToString (ParseResult α String.Iterator) where
+  toString p := match p with
+    | ParseResult.success _ a => s!"success {a}"
+    | ParseResult.error _ e => s!"error {e}"
+
+end Parsing
 
 
 section List_helpers
@@ -65,8 +104,14 @@ def List.repeat (l : List α) (n : Nat) : List α :=
 def listRepeat (n : Nat) (a : α) : List α :=
   (fun _ ↦ a) <$> List.range n
 
+/-- The Cartesian product of two lists. -/
+def List.prod {α β : Type} (as : List α) (bs : List β) : List (α × β) :=
+  as.flatMap fun a ↦ bs.map fun b ↦ (a, b)
+
 /-- An integer interval list with a given starting and end value. -/
 def List.Icc (a b : Int) : List Int := (· + a) <$> (Int.ofNat <$> List.range (b-a+1).toNat)
+
+def List.Ico (a b : Int) : List Int := (· + a) <$> (Int.ofNat <$> List.range (b-a).toNat)
 
 /-- The union of a list of lists. -/
 def List.union' [DecidableEq α] : List (List α) → List α
