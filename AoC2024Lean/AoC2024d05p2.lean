@@ -30,17 +30,11 @@ def OrderRule.permute (r : OrderRule) (n : Nat) : Nat :=
 def OrderRule.enforce (r : OrderRule) (l : List Nat) : List Nat :=
   if r.test l then l else r.permute <$> l
 
-instance : ToString OrderRule := ⟨fun r ↦ s!"RULE({r.before}≪{r.after})"⟩
-
 def Update := List Nat
 
 def Update.mk (l : List Nat) : Update := l
 
-def Update.middle (u : Update) : Nat :=
-  optNum (u.get? (u.length / 2))
-
-instance : ToString Update := ⟨fun u ↦ s!"UPDATE({u.toString})"⟩
-instance : Inhabited Update := {default := []}
+def Update.middle (u : Update) : Nat := optNum (u.get? (u.length / 2))
 
 def Update.validate (u : Update) (rs : List OrderRule) : Bool :=
   (rs.map (·.test u)).all id

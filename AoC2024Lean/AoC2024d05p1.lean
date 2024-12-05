@@ -20,17 +20,11 @@ def OrderRule.test (r : OrderRule) (l : List Nat) : Bool :=
   | some b => b
   | none => true
 
-instance : ToString OrderRule := ⟨fun r ↦ s!"RULE({r.before}≪{r.after})"⟩
-
 def Update := List Nat
 
 def Update.mk (l : List Nat) : Update := l
 
-def Update.middle (u : Update) : Nat :=
-  optNum (u.get? (u.length / 2))
-
-instance : ToString Update := ⟨fun u ↦ s!"UPDATE({u.toString})"⟩
-instance : Inhabited Update := {default := []}
+def Update.middle (u : Update) : Nat := optNum (u.get? (u.length / 2))
 
 def Update.validate (u : Update) (rs : List OrderRule) : Bool :=
   (rs.map (·.test u)).all id
