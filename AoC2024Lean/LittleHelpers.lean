@@ -187,6 +187,10 @@ def String.removeAny (orig : String) (rems : List String) : String :=
     | r :: rs, s => helper rs (s.remove r)
   helper rems orig
 
+def Std.Internal.Parsec.String.Parser.separated {α β : Type} (p : Parser β) (sep : Parser α) :
+    Parser (List β) := do
+  return (← p) :: (← many (sep *> p)).toList
+
 end String_helpers -- section
 
 
