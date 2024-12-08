@@ -99,15 +99,10 @@ def main : IO Unit := do
   IO.println ""
   let input ← (IO.FS.readFile "./AoC2024Lean/input-AoC2024d06p1.txt")
   let (map, g) := readInput input.trim
-  let possibleBlocks' := ((Gallivant.go cutoff >>= fun _ ↦
-                Gallivant.wouldHaveBlocked).run (g, [g])).run map
-  let possibleBlocks := (possibleBlocks'.1.union []).removeAll [g.xy]
-  let blockedMaps : List ((List (List Place)) × (Int × Int)) :=
-    possibleBlocks.map fun xy ↦ (addBlock map xy, xy)
-  let mut plans : List ((Int × Int) × Bool) := []
-  for (bmap, i) in blockedMaps.augmentWithEnum₁ do
-    let works := (((Gallivant.go cutoff).run (g, [g])).run bmap.1).1
-    plans := (bmap.2, works) :: plans
-  IO.println <| s!"Ways to create a loop : {(plans.filter (·.2)).length}"
+  let possibleBlocks := ((((Gallivant.go cutoff >>= fun _ ↦
+    Gallivant.wouldHaveBlocked).run (g, [g])).run map).1.union []).removeAll [g.xy]
+  let blockedMaps := possibleBlocks.map fun xy ↦ (addBlock map xy, xy)
+  let plans := blockedMaps.map fun bmap ↦ (((Gallivant.go cutoff).run (g, [g])).run bmap.1).1
+  IO.println <| s!"Ways to create a loop : {(plans.filter (·)).length}"
 
 --#eval main -- Ways to create a loop : 6
