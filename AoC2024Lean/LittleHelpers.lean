@@ -118,6 +118,12 @@ def List.union' [DecidableEq α] : List (List α) → List α
   | [] => []
   | l :: ls => ls.union'.union l
 
+/-- List of pairs of elements at positions `i,j` with `i<j` in a list. -/
+def List.pairs {α : Type} (l : List α) : List (α × α) :=
+  List.flatten <| listOpt <| (List.range (l.length-1)).map fun i ↦ do
+    let a ← l.get? i
+    pure <| (l.drop (i+1)).map fun b ↦ (a, b)
+
 /-- Applying a list of maps sequentially. -/
 def applyAll {α : Type u} (funs : List (α → α)) (a : α) : α :=
   match funs with
