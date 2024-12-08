@@ -3,12 +3,6 @@ import AoC2024Lean.LittleHelpers
 open Std.Internal Parsec Lean.Parser
 open Std.Internal.Parsec.String
 
-def Std.Internal.Parsec.String.Parser.separated {α β : Type} (p : Parser β) (sep : Parser α) :
-    Parser (List β) := do
-  let x ← p
-  let xs ← many (sep *> p)
-  return x :: xs.toList
-
 structure OrderRule where
   before : Nat
   after : Nat
